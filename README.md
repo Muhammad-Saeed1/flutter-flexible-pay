@@ -5,6 +5,12 @@ Make payments via Google approved merchants across the globe. Supports IOS & And
 
 ## Usage
 
+### AndroidManifest
+```xml
+<meta-data
+    android:name="com.google.android.gms.wallet.api.enabled"
+    android:value="true" />
+```
 
 ### Load the payment configurations like so;
 ```dart

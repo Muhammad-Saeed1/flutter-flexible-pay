@@ -26,7 +26,7 @@ class FlutterFlexiblePayPlugin: FlutterPlugin, MethodCallHandler, PluginRegistry
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
 
-  private val channelName = "flutter_payments"
+  private val channelName = "flutter_flexible_pay"
   private val methodRequestCustomPayment = "request_payment_custom_payment"
   private val methodIsAvailable = "is_available"
   private val keyMethod = "method_name"
