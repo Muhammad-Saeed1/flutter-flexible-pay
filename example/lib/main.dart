@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
-            title: const Text('Flutter Payments'),
+            title: const Text('Flutter Flexible Pay'),
           ),
           body: Builder(builder: (context) {
             scaffoldContext = context;
