@@ -19,8 +19,8 @@ class _MyAppState extends State<MyApp> {
   /// This example file was used to implement stripe payment
   /// For other payment, remove "stripe:*" key occurrences and replace with "gatewayMerchantId"
   Future<void> preparePaymentConfig() async {
-    final String response =
-    await rootBundle.loadString('assets/configurations/payment_profile_google_pay.json');
+    final String response = await rootBundle
+        .loadString('assets/configurations/payment_profile_google_pay.json');
     final data = await json.decode(response);
     // Set the payment profile and configurations
     FlutterFlexiblePay.setPaymentConfig(data);
@@ -37,7 +37,6 @@ class _MyAppState extends State<MyApp> {
     if (!(await FlutterFlexiblePay.isAvailable(environment))) {
       _showToast(scaffoldContext, "Google Pay Not Available!");
     } else {
-
       PaymentItem product = PaymentItem(
         countryCode: "US",
         currencyCode: "USD",
@@ -66,13 +65,13 @@ class _MyAppState extends State<MyApp> {
             scaffoldContext = context;
             return Center(
                 child: Column(
-                  children: <Widget>[
-                    TextButton(
-                      onPressed: _makeStripePayment,
-                      child: const Text('Make payment'),
-                    ),
-                  ],
-                ));
+              children: <Widget>[
+                TextButton(
+                  onPressed: _makeStripePayment,
+                  child: const Text('Make payment'),
+                ),
+              ],
+            ));
           })),
     );
   }

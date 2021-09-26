@@ -1,7 +1,7 @@
 name: flutter_flexible_pay
 description: Provides you the ability to make payments on flutter using any of
   Google approved merchants via Google Pay. Available for both IOS & Android.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/olubunmitosin/flutter-flexible-pay
 
 environment:

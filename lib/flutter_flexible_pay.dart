@@ -3,11 +3,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 
+
+/// Main plugin file [FlutterFlexiblePay].
 class FlutterFlexiblePay {
   static const MethodChannel _channel = MethodChannel('flutter_flexible_pay');
 
-  static setPaymentConfig (Map data) async {
-
+  /// Accepts parsed json file as [data]
+  static setPaymentConfig(Map data) async {
     try {
       await _channel.invokeMethod("set_configurations", data);
     } catch (error) {
@@ -15,14 +17,15 @@ class FlutterFlexiblePay {
     }
   }
 
-  // Call the payment processor
+  /// Call the payment processor to process [data] dataType of [PaymentItem]
   static Future<Result> makePayment(PaymentItem data) async {
     return _call("request_payment_custom_payment", data.toMap());
   }
 
-  // Call handler to parse the string method Name
+  /// An async handler to parse the string method [methodName] and [data]
   static Future<Result> _call(String methodName, dynamic data) async {
-    Result result = await _channel.invokeMethod(methodName, data).then((dynamic data) {
+    Result result =
+        await _channel.invokeMethod(methodName, data).then((dynamic data) {
       return _parseResult(data);
     }).catchError((dynamic error) {
       return Result(error?.toString() ?? 'unknown error', {"error": null},
@@ -31,19 +34,21 @@ class FlutterFlexiblePay {
     return result;
   }
 
-// Check payment availability
+  /// Check payment availability using [environment]
   static Future<bool> isAvailable(String environment) async {
     if (!Platform.isAndroid) {
       return false;
     }
     try {
-      Map map = await _channel.invokeMethod("is_available", {"environment": environment});
+      Map map = await _channel
+          .invokeMethod("is_available", {"environment": environment});
       return map['isAvailable'];
     } catch (error) {
       return false;
     }
   }
 
+  /// Parse payment response in [map]
   static Result _parseResult(dynamic map) {
     var error = map['error'];
     var status = map['status'];
@@ -65,6 +70,7 @@ class FlutterFlexiblePay {
     return Result(error, result, resultStatus, description);
   }
 
+  /// Parse payment status using [status]
   static ResultStatus parseStatus(String status) {
     switch (status) {
       case "success":
@@ -88,17 +94,18 @@ class FlutterFlexiblePay {
 }
 
 
+
 class PaymentItem {
   String currencyCode;
   String amount;
   String label;
   String countryCode;
 
-  PaymentItem({
-    required this.currencyCode,
-    required this.amount,
-    required this.label,
-    required this.countryCode});
+  PaymentItem(
+      {required this.currencyCode,
+      required this.amount,
+      required this.label,
+      required this.countryCode});
 
   Map toMap() {
     Map args = {};
@@ -140,7 +147,6 @@ class Result {
   Result(this.error, this.data, this.status, this.description);
 }
 
-
 bool _validateAmount(dynamic amount) {
   return (amount?.toString() ?? "").isNotEmpty;
 }
@@ -157,4 +163,3 @@ bool _validateCurrencyCode(dynamic currencyCode) {
 bool isEmpty(String value) {
   return value.isEmpty;
 }
-
