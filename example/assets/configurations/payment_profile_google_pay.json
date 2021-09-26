@@ -1,0 +1,35 @@
+{
+  "environment": "TEST",
+  "apiVersion": 2,
+  "apiVersionMinor": 0,
+  "allowedPaymentMethods": [
+    {
+      "type": "CARD",
+      "tokenizationSpecification": {
+        "type": "PAYMENT_GATEWAY",
+        "parameters": {
+          "gateway": "example",
+          "stripe:version": "2018-10-31",
+          "stripe:publishableKey": "pk_test_1IV5H8NyhgGYOeK6vYV3Qw8f"
+        }
+      },
+      "parameters": {
+        "allowedCardNetworks": ["AMEX", "DISCOVER", "INTERAC", "JCB", "MASTERCARD", "VISA"],
+        "allowedAuthMethods": ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+        "billingAddressRequired": false,
+        "billingAddressParameters": {
+          "format": "FULL",
+          "phoneNumberRequired": false
+        }
+      }
+    }
+  ],
+  "merchantInfo": {
+    "merchantId": "example",
+    "merchantName": "Example Merchant"
+  },
+  "transactionInfo": {
+    "countryCode": "US",
+    "currencyCode": "USD"
+  }
+}
