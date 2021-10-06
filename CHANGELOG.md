@@ -1,5 +1,5 @@
 ## 0.0.2
-* Resolve response blocker
+* Resolved response blocker
 * Improved response messages
 * Improved documentation
 
