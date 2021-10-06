@@ -44,10 +44,20 @@ class _MyAppState extends State<MyApp> {
         label: "Shirt",
       );
 
+      /// Make payment using async [FlutterFlexiblePay]
       FlutterFlexiblePay.makePayment(product).then((Result result) {
-        if (result.status == ResultStatus.success) {
-          _showToast(scaffoldContext, 'Success');
+        if (result.status == ResultStatus.SUCCESS) {
+          _showToast(scaffoldContext, result.description);
         }
+
+        if(result.status == ResultStatus.RESULT_CANCELED) {
+          _showToast(scaffoldContext, result.error);
+        }
+
+        if(result.status == ResultStatus.UNKNOWN) {
+          _showToast(scaffoldContext, 'Unknown Error');
+        }
+
       }).catchError((dynamic error) {
         _showToast(scaffoldContext, error.toString());
       });

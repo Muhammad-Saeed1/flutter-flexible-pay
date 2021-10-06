@@ -49,6 +49,7 @@ class FlutterFlexiblePayPlugin: FlutterPlugin, MethodCallHandler, PluginRegistry
    */
   private var mPaymentsClient: PaymentsClient? = null
   private lateinit var mActivity: Activity
+  private lateinit var activityBinding: ActivityPluginBinding
 
   private fun client(): PaymentsClient? {
     if (mPaymentsClient == null) {
@@ -72,6 +73,8 @@ class FlutterFlexiblePayPlugin: FlutterPlugin, MethodCallHandler, PluginRegistry
     val data: MutableMap<String, Any> = HashMap()
     data["status"] = "SUCCESS"
     data["result"] = paymentInfo
+    data["description"] = "Payment was successful!"
+    data["error"] = ""
     mLastResult!!.success(data)
   }
 
@@ -95,12 +98,12 @@ class FlutterFlexiblePayPlugin: FlutterPlugin, MethodCallHandler, PluginRegistry
         }
 
         val statusCode: Any = when (status.statusCode) {
-          8 -> "resultInternalError"
-          10 -> "developerError"
-          15 -> "resultTimeout"
-          16 -> "resultCanceled"
-          18 -> "resultDeadClient"
-          else -> "unknown"
+          8 -> "RESULT_INTERNAL_ERROR"
+          10 -> "DEVEOPER_ERROR"
+          15 -> "RESULT_TIMEOUT"
+          16 -> "RESULT_CANCELED"
+          18 -> "RESULT_DEAD_CLIENT"
+          else -> "UNKNOWN"
         }
         data["error"] = statusMessage
         data["status"] = statusCode
@@ -111,7 +114,7 @@ class FlutterFlexiblePayPlugin: FlutterPlugin, MethodCallHandler, PluginRegistry
         data["description"] = "Payment finished without additional information"
       }
       mLastResult!!.success(data)
-      mLastResult = null
+      //mLastResult = null
     }
   }
 
@@ -120,8 +123,9 @@ class FlutterFlexiblePayPlugin: FlutterPlugin, MethodCallHandler, PluginRegistry
       val data: MutableMap<String, Any> = HashMap()
       data["status"] = "RESULT_CANCELED"
       data["description"] = "Canceled by user"
+      data["error"] = "Request was canceled by user"
       mLastResult!!.success(data)
-      mLastResult = null
+      //mLastResult = null
     }
   }
 
@@ -207,7 +211,9 @@ class FlutterFlexiblePayPlugin: FlutterPlugin, MethodCallHandler, PluginRegistry
 
   // Once the activity is attached, bind plugin activity to main activity
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    activityBinding = binding
     mActivity = binding.activity
+    binding.addActivityResultListener(this)
   }
 
   override fun onDetachedFromActivityForConfigChanges() {
@@ -219,7 +225,8 @@ class FlutterFlexiblePayPlugin: FlutterPlugin, MethodCallHandler, PluginRegistry
   }
 
   override fun onDetachedFromActivity() {
-    //do nothing
+    // remove activity listener
+    activityBinding.removeActivityResultListener(this)
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -245,7 +252,8 @@ class FlutterFlexiblePayPlugin: FlutterPlugin, MethodCallHandler, PluginRegistry
    * @see <a href="https://developer.android.com/training/basics/intents/result">Getting a result
    * from an Activity</a>
    */
-  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent): Boolean {
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+
     if (requestCode == loadPaymentDataRequestCode) {
       when (resultCode) {
         Activity.RESULT_OK -> {

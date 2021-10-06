@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import "dart:io";
 import 'dart:async';
 import 'dart:convert';
@@ -24,14 +26,8 @@ class FlutterFlexiblePay {
 
   /// An async handler to parse the string method [methodName] and [data]
   static Future<Result> _call(String methodName, dynamic data) async {
-    Result result =
-        await _channel.invokeMethod(methodName, data).then((dynamic data) {
-      return _parseResult(data);
-    }).catchError((dynamic error) {
-      return Result(error?.toString() ?? 'unknown error', {"error": null},
-          ResultStatus.error, (error?.toString()) ?? "");
-    });
-    return result;
+    var result = await _channel.invokeMethod(methodName, data).then((dynamic data) => data);
+    return _parseResult(result);
   }
 
   /// Check payment availability using [environment]
@@ -57,38 +53,44 @@ class FlutterFlexiblePay {
     if (result != null) {
       result = json.decode(result);
     }
+
     ResultStatus resultStatus;
-    if (error != null) {
-      resultStatus = ResultStatus.error;
-    } else if (status != null) {
+    if (status != null) {
       resultStatus = parseStatus(status);
+    } else if (error != null) {
+      resultStatus =  ResultStatus.ERROR;
     } else if (result != null) {
-      resultStatus = ResultStatus.success;
+      resultStatus = ResultStatus.SUCCESS;
     } else {
-      resultStatus = ResultStatus.unknown;
+      resultStatus = ResultStatus.UNKNOWN;
     }
+
+    /// if result is null, make an empty object instead
+    result ??= {};
+
+    /// return response as instance of [Result]
     return Result(error, result, resultStatus, description);
   }
 
   /// Parse payment status using [status]
   static ResultStatus parseStatus(String status) {
     switch (status) {
-      case "success":
-        return ResultStatus.success;
-      case "error":
-        return ResultStatus.error;
-      case "resultCanceled":
-        return ResultStatus.resultCanceled;
-      case "resultInternalError":
-        return ResultStatus.resultInternalError;
-      case "developerError":
-        return ResultStatus.developerError;
-      case "resultTimeout":
-        return ResultStatus.resultTimeout;
-      case "resultDeadClient":
-        return ResultStatus.resultDeadClient;
+      case "SUCCESS":
+        return ResultStatus.SUCCESS;
+      case "ERROR":
+        return ResultStatus.ERROR;
+      case "RESULT_CANCELED":
+        return ResultStatus.RESULT_CANCELED;
+      case "RESULT_INTERNAL_ERROR":
+        return ResultStatus.RESULT_INTERNAL_ERROR;
+      case "DEVELOPER_ERROR":
+        return ResultStatus.DEVELOPER_ERROR;
+      case "RESULT_TIMEOUT":
+        return ResultStatus.RESULT_TIMEOUT;
+      case "RESULT_DEAD_CLIENT":
+        return ResultStatus.RESULT_DEAD_CLIENT;
       default:
-        return ResultStatus.unknown;
+        return ResultStatus.UNKNOWN;
     }
   }
 }
@@ -128,14 +130,14 @@ class PaymentItem {
 }
 
 enum ResultStatus {
-  success,
-  error,
-  resultCanceled,
-  resultInternalError,
-  developerError,
-  resultTimeout,
-  resultDeadClient,
-  unknown,
+  SUCCESS,
+  ERROR,
+  RESULT_CANCELED,
+  RESULT_INTERNAL_ERROR,
+  DEVELOPER_ERROR,
+  RESULT_TIMEOUT,
+  RESULT_DEAD_CLIENT,
+  UNKNOWN,
 }
 
 class Result {

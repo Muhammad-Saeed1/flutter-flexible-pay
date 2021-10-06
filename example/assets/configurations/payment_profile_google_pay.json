@@ -9,8 +9,8 @@
         "type": "PAYMENT_GATEWAY",
         "parameters": {
           "gateway": "example",
-          "stripe:version": "2018-10-31",
-          "stripe:publishableKey": "pk_test_1IV5H8NyhgGYOeK6vYV3Qw8f"
+          "stripe:version": "2020-08-27",
+          "stripe:publishableKey": "pk_test_93kDNifjbOKDKABjdasnndOOAPJDN"
         }
       },
       "parameters": {
