@@ -1,3 +1,9 @@
+## 0.0.3
+* Added Apple Pay
+* Added smooth response inline with android version
+* Improved experience
+* Apple payment profile & Google payment profile can noe be loaded at once
+
 ## 0.0.2
 * Resolved response blocker
 * Improved response messages
