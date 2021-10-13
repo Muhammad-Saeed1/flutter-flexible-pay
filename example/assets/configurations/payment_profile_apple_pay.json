@@ -1,0 +1,14 @@
+{
+  "merchantIdentifier": "merchant.com.sams.fish",
+  "displayName": "Sam's Fish",
+  "merchantCapabilities": ["threeDS", "debit", "credit"],
+  "supportedNetworks": ["amex", "visa", "discover", "masterCard"],
+  "countryCode": "US",
+  "currencyCode": "USD",
+  "requiredBillingContactFields": ["emailAddress", "name", "phoneNumber", "postalAddress"],
+  "requiredShippingContactFields": [],
+  "gateway" : "stripe",
+  "stripe:version": "2020-08-27",
+  "stripe:publishableKey": "pk_test_93kDNifjbOKDKABjdasnndOOAPJDN",
+  "shippingMethods": []
+}

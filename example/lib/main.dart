@@ -19,11 +19,16 @@ class _MyAppState extends State<MyApp> {
   /// This example file was used to implement stripe payment
   /// For other payment, remove "stripe:*" key occurrences and replace with "gatewayMerchantId"
   Future<void> preparePaymentConfig() async {
-    final String response = await rootBundle
-        .loadString('assets/configurations/payment_profile_google_pay.json');
-    final data = await json.decode(response);
+
+    Map<String, dynamic> profiles = {
+    'google': 'assets/configurations/payment_profile_google_pay.json',
+    'apple': 'assets/configurations/payment_profile_apple_pay.json',
+    };
+    // final String response = await rootBundle
+    //     .loadString('assets/configurations/payment_profile_google_pay.json');
+    // final data = await json.decode(response);
     // Set the payment profile and configurations
-    FlutterFlexiblePay.setPaymentConfig(data);
+    FlutterFlexiblePay.setPaymentConfig(profiles);
   }
 
   @override
@@ -35,22 +40,27 @@ class _MyAppState extends State<MyApp> {
   _makeStripePayment() async {
     var environment = 'test'; // or 'production'
     if (!(await FlutterFlexiblePay.isAvailable(environment))) {
-      _showToast(scaffoldContext, "Google Pay Not Available!");
+      _showToast(scaffoldContext, "Google or Apple Pay Not Available on this device!");
     } else {
       PaymentItem product = PaymentItem(
         countryCode: "US",
         currencyCode: "USD",
-        amount: "0.10",
+        amount: "0.80",
         label: "Shirt",
       );
 
       /// Make payment using async [FlutterFlexiblePay]
       FlutterFlexiblePay.makePayment(product).then((Result result) {
+
         if (result.status == ResultStatus.SUCCESS) {
           _showToast(scaffoldContext, result.description);
         }
 
         if(result.status == ResultStatus.RESULT_CANCELED) {
+          _showToast(scaffoldContext, result.error);
+        }
+
+        if(result.status == ResultStatus.ERROR) {
           _showToast(scaffoldContext, result.error);
         }
 

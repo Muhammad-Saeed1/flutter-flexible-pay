@@ -9,36 +9,112 @@ import 'package:flutter/services.dart';
 /// Main plugin file [FlutterFlexiblePay].
 class FlutterFlexiblePay {
   static const MethodChannel _channel = MethodChannel('flutter_flexible_pay');
+  static bool isConfigSet = true;
 
-  /// Accepts parsed json file as [data]
-  static setPaymentConfig(Map data) async {
+  static Future<void> closeApplePaySheet({required bool isSuccess}) async {
+    if (Platform.isIOS) {
+      if(isSuccess) {
+        await _channel.invokeMethod('closeApplePaySheetWithSuccess');
+      }
+      else {
+        await _channel.invokeMethod('closeApplePaySheetWithError');
+      }
+    } else {
+      throw Exception("Only called for apple payments");
+    }
+  }
+
+  /// Accepts payments profiles as files json [assetsFile]
+  static setPaymentConfig(Map<String, dynamic> assetsFile) async {
     try {
-      await _channel.invokeMethod("set_configurations", data);
+
+      Map<String, dynamic>? googleProfile;
+      Map<String, dynamic>? appleProfile;
+
+      /// Load google payment profile if it's set
+      if ( assetsFile['google'] != null ) {
+        String googleParsed = await rootBundle.loadString(assetsFile['google']);
+        googleProfile = json.decode(googleParsed);
+        if ( Platform.isAndroid) {
+          await _channel.invokeMethod("set_configurations", googleProfile);
+        }
+      }
+
+      /// Load Apple payment profile if it's set
+      if ( assetsFile['apple'] != null ) {
+        final String appleParsed = await rootBundle.loadString(assetsFile['apple']);
+        appleProfile = json.decode(appleParsed);
+        if ( Platform.isIOS ) {
+          await _channel.invokeMethod("set_apple_configurations", appleProfile);
+        }
+      }
+
+      /// If non is set, flag [isConfigSet = false]
+      if ( googleProfile == null && appleProfile == null ) {
+        isConfigSet = false;
+      }
+
     } catch (error) {
-      // do nothing for now
+      isConfigSet = false;
     }
   }
 
   /// Call the payment processor to process [data] dataType of [PaymentItem]
   static Future<Result> makePayment(PaymentItem data) async {
-    return _call("request_payment_custom_payment", data.toMap());
+
+    bool isPending = false;
+
+    if( !isConfigSet ) {
+      final Map<String, dynamic> error = {
+        "error" : 'Configs not set',
+        "status" : ResultStatus.ERROR,
+        "description" : "Sorry! Base configurations are not set. Ensure you have loaded the payment profiles"
+      };
+
+      return _parseResult(error);
+    }
+
+    if ( Platform.isAndroid) {
+      /// Request Payment using Google Pay
+      return _call("request_payment_custom_payment", data.toMap());
+
+    } else {
+
+      /// Request Payment using Apple Pay
+      final Map<String, Object> args = {
+        'paymentItem': data.toMap(),
+        'isPending' : isPending
+      };
+
+      return _call("request_apple_payment", args);
+    }
   }
 
   /// An async handler to parse the string method [methodName] and [data]
   static Future<Result> _call(String methodName, dynamic data) async {
     var result = await _channel.invokeMethod(methodName, data).then((dynamic data) => data);
+    // Token was obtained successfully
     return _parseResult(result);
   }
 
   /// Check payment availability using [environment]
   static Future<bool> isAvailable(String environment) async {
-    if (!Platform.isAndroid) {
+
+    if (!Platform.isIOS && !Platform.isAndroid) {
       return false;
     }
+
     try {
-      Map map = await _channel
-          .invokeMethod("is_available", {"environment": environment});
+      // Response holder
+      Map map;
+
+      if (Platform.isIOS) {
+        map = await _channel.invokeMethod("can_make_apple_payments");
+      } else {
+        map = await _channel.invokeMethod("is_available", {"environment": environment});
+      }
       return map['isAvailable'];
+
     } catch (error) {
       return false;
     }
@@ -50,21 +126,23 @@ class FlutterFlexiblePay {
     var status = map['status'];
     var result = map['result'];
     var description = map["description"];
+
+    error ??= "";
+
     if (result != null) {
-      result = json.decode(result);
+      if(result is String) {
+        result = json.decode(result);
+      }
     }
 
     ResultStatus resultStatus;
     if (status != null) {
       resultStatus = parseStatus(status);
-    } else if (error != null) {
-      resultStatus =  ResultStatus.ERROR;
     } else if (result != null) {
       resultStatus = ResultStatus.SUCCESS;
     } else {
       resultStatus = ResultStatus.UNKNOWN;
     }
-
     /// if result is null, make an empty object instead
     result ??= {};
 
@@ -105,9 +183,9 @@ class PaymentItem {
 
   PaymentItem(
       {required this.currencyCode,
-      required this.amount,
-      required this.label,
-      required this.countryCode});
+        required this.amount,
+        required this.label,
+        required this.countryCode});
 
   Map toMap() {
     Map args = {};

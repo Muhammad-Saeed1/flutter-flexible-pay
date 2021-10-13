@@ -1,0 +1,29 @@
+PODS:
+  - Flutter (1.0.0)
+  - flutter_flexible_pay (0.0.3):
+    - Flutter
+    - Stripe
+  - Stripe (17.0.4)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - flutter_flexible_pay (from `.symlinks/plugins/flutter_flexible_pay/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Stripe
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  flutter_flexible_pay:
+    :path: ".symlinks/plugins/flutter_flexible_pay/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
+  flutter_flexible_pay: 7fb95eb1dd8cf5de0f9c424a27b930cce8eb51e5
+  Stripe: 54de24c0039e9fe6ad6217325db81350552df6a9
+
+PODFILE CHECKSUM: 7368163408c647b7eb699d0d788ba6718e18fb8d
+
+COCOAPODS: 1.10.1
