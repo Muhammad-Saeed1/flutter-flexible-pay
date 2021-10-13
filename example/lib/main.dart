@@ -24,10 +24,6 @@ class _MyAppState extends State<MyApp> {
     'google': 'assets/configurations/payment_profile_google_pay.json',
     'apple': 'assets/configurations/payment_profile_apple_pay.json',
     };
-    // final String response = await rootBundle
-    //     .loadString('assets/configurations/payment_profile_google_pay.json');
-    // final data = await json.decode(response);
-    // Set the payment profile and configurations
     FlutterFlexiblePay.setPaymentConfig(profiles);
   }
 
