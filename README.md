@@ -4,11 +4,10 @@
 Make Stripe payments via Google pay & Apple Pay across the globe with ease Supports IOS & Android [Payment Request API](https://developers.google.com/pay/api/android/overview).
 Personally, I love simplicity!
 
-Examples            |  Screenshots
-:-------------------------:|:-------------------------:
-<img src="https://user-images.githubusercontent.com/42380340/137212417-4ae5e23a-29a0-461f-914c-8877351f25f0.png" alt="drawing" width="200"/> |  <img src="https://user-images.githubusercontent.com/42380340/137212427-8018b03f-a8a2-4238-b2fc-fcefa20e2902.png" alt="drawing" width="200"/>
+&nbsp;            |  &nbsp;                            | &nbsp; 
+:-------------------------:|:-------------------------:|:-------------------------:
+<img src="https://user-images.githubusercontent.com/42380340/137212417-4ae5e23a-29a0-461f-914c-8877351f25f0.png" alt="drawing" width="200"/> |  <img src="https://user-images.githubusercontent.com/42380340/137212427-8018b03f-a8a2-4238-b2fc-fcefa20e2902.png" alt="drawing" width="200"/> | <img src="https://user-images.githubusercontent.com/42380340/137212431-6ac9ef48-6588-4ed8-b6c7-141a91335ed0.png" alt="drawing" width="200"/>
 
-<img src="https://user-images.githubusercontent.com/42380340/137212431-6ac9ef48-6588-4ed8-b6c7-141a91335ed0.png" alt="drawing" width="200"/>
 <img src="https://user-images.githubusercontent.com/42380340/137212434-40943a79-7ea2-44e9-a591-f4e34dab4e42.png" alt="drawing" width="200"/>
 
 ## Usage
